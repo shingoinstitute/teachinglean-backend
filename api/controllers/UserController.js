@@ -52,7 +52,7 @@ module.exports = {
     var csrfCookiePayload = jwt.verify(xsrf_cookie, secret, options);
 
     if (csrfHeaderPayload.user.uuid !== csrfCookiePayload.user.uuid) {
-      return res.status(403).json({ error: "'X-XSRF-TOKEN' and 'XSRF-TOKEN' tokens present in header and cookies do not match." });
+      return res.status(403).json({ error: "'X-XSRF-TOKEN' present in header and 'XSRF-TOKEN' present cookies do not match." });
     }
     
     User.findOne({uuid: csrfCookiePayload.user.uuid}).exec((err, user) => {

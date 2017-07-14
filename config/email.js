@@ -4,7 +4,7 @@
 
 module.exports.email = {
 	emailVerificationURL: process.env.HOST_SERVER || process.env.NODE_ENV == 'production' ? 'https://teachinglean.org/verifyEmail' : `http://localhost:${process.env.PORT || '3000'}/verifyEmail`,
-	passwordResetURL: process.env.HOST_SERVER || process.env.NODE_ENV == 'production' ? 'https://teachinglean.org/reset' : `http://localhost:${process.env.PORT || '3000'}/reset`,
+	passwordResetURL: (process.env.HOST_SERVER || process.env.NODE_ENV == 'production') ? 'https://teachinglean.org/reset' : (`http://localhost:${process.env.PORT || '3000'}` + '/reset'),
 	saltRounds: 10,
 	tokenExpires: 1000*60*60*12
 }

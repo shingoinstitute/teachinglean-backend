@@ -68,7 +68,7 @@ module.exports = {
 					});
 
 					var redirectDomain = process.env.HOST_SERVER || `http://localhost:${process.env.PORT}`;
-					var redirectUrl = `${redirectDomain}/${user.uuid}?token=${token}`;
+					var redirectUrl = `${redirectDomain}/reset/${user.uuid}?token=${token}`;
 
 					transporter.sendMailAsync({
 						from: 'shingo.it@usu.edu',

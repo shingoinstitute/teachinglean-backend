@@ -23,10 +23,9 @@ module.exports = {
 			}
 
 			if (!user) {
-				sails.log.warn(`Undefined user on login with local auth strategy.\n\tAuthController.js::localAuth.\n\t${timestamp}.`);
+				var error = info.error || 'You could not be logged in. Please make sure your username and password are correct and try again.';
 				return res.status(404).json({ 
-					error: `Account using ${req.param('username')} was not found.`, 
-					info: info
+					error: error
 				});
 			}
 			
