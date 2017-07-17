@@ -69,7 +69,7 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  host: 'localhost',
+  host: process.env.REDIS_HOST || 'localhost',
   port: 6379,
   // ttl: 60*60,
   // resave: true,
