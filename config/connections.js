@@ -34,7 +34,7 @@ module.exports.connections = {
 
   mysql: {
     adapter: 'sails-mysql',
-    host: 'localhost',
+    host: process.env.MYSQL_HOST || 'localhost',
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: 'leansiteDB'
