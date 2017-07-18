@@ -59,7 +59,7 @@ module.exports = {
 	 */
 	createAndSetToken: function(res, user) {
 		var token = AuthService.createToken(user);
-		if (res && res.cookie) { res.cookie['XSRF-TOKEN', token]; }
+		if (res && res.cookie) { res.cookie('XSRF-TOKEN', token); }
 		return token;
 	},
 

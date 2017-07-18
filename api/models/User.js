@@ -168,16 +168,17 @@ module.exports = {
 		}
 
 		// If accountIsActive is false, this is account is being recreated after a deletion, and a permissions object shouldn't be created for it.
-		if (newRecord.accountIsActive === false) {return next();}
+		// if (newRecord.accountIsActive === false) {return next();}
+		return next();
 
-		UserPermissions.create({user: newRecord.uuid}).exec(function(err, permissions) {
-			if (err) return next(err);
-			newRecord.permissions = permissions.uuid;
-			User.update({uuid: newRecord.uuid}, newRecord).exec(function(err, user) {
-				if (err) return next(err);
-				return next();
-			});
-		});
+		// UserPermissions.create({user: newRecord.uuid}).exec(function(err, permissions) {
+		// 	if (err) return next(err);
+		// 	newRecord.permissions = permissions.uuid;
+		// 	User.update({uuid: newRecord.uuid}, newRecord).exec(function(err, user) {
+		// 		if (err) return next(err);
+		// 		return next();
+		// 	});
+		// });
 	},
 
 	beforeUpdate: function (values, next) {

@@ -19,13 +19,13 @@ function getFileType(path) {
     const stats = fs.statSync(path);
     const buffer = readChunk.sync(path, 0, stats.size);
     return fileType(buffer);
-  } catch(err) {
+  } catch (err) {
     console.error(err.message);
   }
 }
 
 module.exports = {
-  
+
   /**
    * @desc :: Handler for '/me', gets currently authenticated user
    */
@@ -54,8 +54,8 @@ module.exports = {
     if (csrfHeaderPayload.user.uuid !== csrfCookiePayload.user.uuid) {
       return res.status(403).json({ error: "'X-XSRF-TOKEN' present in header and 'XSRF-TOKEN' present cookies do not match." });
     }
-    
-    User.findOne({uuid: csrfCookiePayload.user.uuid}).exec((err, user) => {
+
+    User.findOne({ uuid: csrfCookiePayload.user.uuid }).exec((err, user) => {
       if (err) {
         delete res.cookies['XSRF-TOKEN'];
         sails.log.error(err);
@@ -64,12 +64,12 @@ module.exports = {
 
       if (!user) {
         delete res.cookies['XSRF-TOKEN'];
-        return res.status(404).json({error: `user not found with id ${payload.user.uuid}`});
+        return res.status(404).json({ error: `user not found with id ${payload.user.uuid}` });
       }
 
       return res.json(user.toJSON());
     });
-    
+
   },
 
   /**
@@ -78,31 +78,34 @@ module.exports = {
    */
   stats: (req, res) => {
     User.find()
-    .then(users => {
+      .then(users => {
 
-      var active = 0, disabled = 0, members = 0, admins = 0, moderators = 0, authors = 0, editors = 0, verifiedEmails = 0;
+        var active = 0, disabled = 0, members = 0, admins = 0, moderators = 0, authors = 0, editors = 0, verifiedEmails = 0;
 
-      users.map(user => {
-        if (user.role == 'admin' || user.role == 'systemAdmin') {
-          admins++;
-        } else if (user.role === 'moderator') {
-          members++;
-        } else if (user.role === 'editor') {
-          editors++;
-        } else if (user.role === 'author') {
-          authors++;
-        } else if (user.role == 'user') {
-          moderators++; }
+        users.map(user => {
+          if (user.role == 'admin' || user.role == 'systemAdmin') {
+            admins++;
+          } else if (user.role === 'moderator') {
+            members++;
+          } else if (user.role === 'editor') {
+            editors++;
+          } else if (user.role === 'author') {
+            authors++;
+          } else if (user.role == 'user') {
+            moderators++;
+          }
 
-        if (user.accountIsActive) {
-          active++; }
-        else {
-          disabled++; }
-        
-        if (user.veriedEmail) { verifiedEmails++; }
-      });
-      
-      return res.json({
+          if (user.accountIsActive) {
+            active++;
+          }
+          else {
+            disabled++;
+          }
+
+          if (user.veriedEmail) { verifiedEmails++; }
+        });
+
+        return res.json({
           size: users.length,
           active: active,
           disabled: disabled,
@@ -113,18 +116,18 @@ module.exports = {
           editors: editors,
           verifiedEmails: verifiedEmails
         });
-    })
-    .catch(err => {
-      return res.negotiate(err);
-    });
+      })
+      .catch(err => {
+        return res.negotiate(err);
+      });
   },
-  
+
   /**
    * @desc getPortrait :: Handler for '/user/portrait', returns user's profile image
    * @var id => User's uuid
    * @var fp => File path of the users profile picture
    */
-  getPortrait: function(req, res) {
+  getPortrait: function (req, res) {
     var fp;
     if (process.env.NODE_ENV === 'development') {
       fp = path.resolve(sails.config.appPath, 'assets/images/profiles/');
@@ -137,12 +140,12 @@ module.exports = {
       return res.status(404).json({ error: 'file not found.' });
     }
 
-    fs.readFile(fp, function(err, data) {
+    fs.readFile(fp, function (err, data) {
       if (err) {
         return res.status(404).json({ error: err });
       }
       const type = getFileType(fp);
-      res.writeHead(200, {'Content-Type': type.mime});
+      res.writeHead(200, { 'Content-Type': type.mime });
       res.end(data, 'binary');
     });
   },
@@ -161,7 +164,7 @@ module.exports = {
     if (!fs.existsSync(profileDir)) {
       fs.mkdirSync(profileDir);
     }
-    
+
     req.file('profile').upload({
       // fileSize <~ 5MB
       dirname: profileDir,
@@ -174,7 +177,7 @@ module.exports = {
       if (uploadedFiles.length == 0) {
         return res.badRequest('No file was uploaded');
       }
-      
+
       var pictureDir = `${profileDir}/${req.user.uuid}`;
 
       /*** Check that file type is an image */
@@ -183,7 +186,7 @@ module.exports = {
         var pictureUrl;
         if (process.env.HOST_SERVER) {
           pictureUrl = `${process.env.HOST_SERVER}/user/portrait`;
-        } else if (process.env.NODE_ENV === 'development'){
+        } else if (process.env.NODE_ENV === 'development') {
           pictureUrl = `http://localhost:${process.env.PORT}/backend/user/portrait`;
         } else {
           pictureUrl = `https://teachinglean.org/user/portrait`;
@@ -192,14 +195,14 @@ module.exports = {
         User.update(req.user.uuid, {
           pictureUrl: pictureUrl
         })
-        .then(function () {
-          res.ok(pictureUrl);
-        })
-        .catch(function (err) {
-          return res.negotiate(err);
-        });
+          .then(function () {
+            res.ok(pictureUrl);
+          })
+          .catch(function (err) {
+            return res.negotiate(err);
+          });
       } else {
-        fs.unlink(pictureDir, function(err) {
+        fs.unlink(pictureDir, function (err) {
           sails.log.error(err.message);
         });
         return res.status(400).json({
@@ -208,9 +211,9 @@ module.exports = {
       }
     });
   },
-  
-  find: function(req, res) {
-    User.find().exec(function(err, users) {
+
+  find: function (req, res) {
+    User.find().exec(function (err, users) {
       if (err) { return res.negotiate(err); }
 
       // Check for if user is an administrator
@@ -230,49 +233,85 @@ module.exports = {
   },
 
   create: function (req, res) {
-    var newUser = {};
-    newUser.email = req.param('email');
-    newUser.password = req.param('password');
-    newUser.firstname = req.param('firstname');
-    newUser.lastname = req.param('lastname');
-    
-    if (!(newUser.email && newUser.password && newUser.firstname && newUser.lastname)) {
-      return res.status(403).json({error: 'Could not create new account, missing required parameters (must have email, password, firstname, and lastname).'});
-    }
-    
-    User.create(newUser).exec(function (err, user) {
-      if (err) return res.status(400).json(err);
-      
-      if (Array.isArray(user)) user = user.pop();
-      
-      if (sails.config.environment === 'production') {
-        EmailService.sendVerificationEmail(user)
-        .then(function (info) {
-          sails.log.info('Email verification link sent to ' + user.email);
-        })
-        .catch(function (err) {
-          sails.log.error(err);
-        });
-      }
 
-      // Create JWT token and add to cookies
-      AuthService.createAndSetToken(res, user);
-      
-      return res.json({
-        success: true,
-        user: user.toJSON(),
-        info: typeof info != 'undefined' ? info.response : ''
+    const email = req.body.email;
+    const password = req.body.password;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    const username = req.body.username;
+
+    if (!(email && password && firstname && lastname && username))
+      return res.status(400).json({ error: 'Could not create new account, missing required fields.' });
+
+    User.findOne({ email: email })
+      .then(function(user) {
+        if (!user) {
+          return User.create({
+            email: email,
+            password: password,
+            firstname: firstname,
+            lastname: lastname,
+            username: username
+          });
+        }
+        return res.status(400).json({ error: 'An account using that email address already exists.' });
+      })
+      .then(function(user, info) {
+        if (Array.isArray(user))
+          user = user.pop();
+
+        if (process.env.NODE_ENV === "production")
+          EmailService.sendVerificationEmail(user)
+            .then(function(info) {
+                sails.log.info('Email verification link sent to ' + user.email);
+            })
+            .catch(function (err) {
+              sails.log.error(err);
+            });
+
+          AuthService.createAndSetToken(res, user);
+
+          return res.json({
+            user: user.toJSON()
+          });
+      })
+      .catch(function(err) {
+        return res.json(err);
       });
-    });
+
+    // User.create(newUser).exec(function (err, user) {
+    //   if (err) return res.status(400).json(err);
+
+    //   if (Array.isArray(user)) user = user.pop();
+
+    //   if (sails.config.environment === 'production') {
+    //     EmailService.sendVerificationEmail(user)
+    //     .then(function (info) {
+    //       sails.log.info('Email verification link sent to ' + user.email);
+    //     })
+    //     .catch(function (err) {
+    //       sails.log.error(err);
+    //     });
+    //   }
+
+    //   // Create JWT token and add to cookies
+    //   AuthService.createAndSetToken(res, user);
+
+    //   return res.json({
+    //     success: true,
+    //     user: user.toJSON(),
+    //     info: typeof info != 'undefined' ? info.response : ''
+    //   });
+    // });
   },
-  
+
   /**
   * Handler for GET "/reset/:id"
   */
   reset: function (req, res) {
     var uuid = req.param('id');
     var token = req.param('token');
-    
+
     User.findOne({
       uuid: uuid
     }).exec(function (err, user) {
@@ -284,7 +323,7 @@ module.exports = {
       });
     });
   },
-  
+
   /**
   * Handler for route POST "/reset", expecting "email" parameter
   */
@@ -292,23 +331,23 @@ module.exports = {
     var email = req.param('email');
     console.log(`Password reset link requested for ${email} at ${new Date().toLocaleString()}`);
     if (!email) { return res.status(400).json("missing email param"); }
-    User.findOne({email: email}).exec(function(err, user) {
+    User.findOne({ email: email }).exec(function (err, user) {
       if (err) return res.negotiate(err);
       if (!user) return res.status(404).json('user not found');
       EmailService.sendPasswordResetEmail(user.email)
-      .then(function (info) {
-        return res.json({
-          success: true,
-          info: `Password reset link succesfully sent to ${user.email}`
+        .then(function (info) {
+          return res.json({
+            success: true,
+            info: `Password reset link succesfully sent to ${user.email}`
+          });
+        })
+        .catch(function (err) {
+          sails.log.error(err);
+          return res.negotiate(err);
         });
-      })
-      .catch(function (err) {
-        sails.log.error(err);
-        return res.negotiate(err);
-      });
     });
   },
-  
+
   /**
   * Handler for PUT "/reset/:id", expects a token parameter to 
   * identify the user, and a password parameter as the new password
@@ -317,16 +356,16 @@ module.exports = {
     var uuid = req.param('id');
     var token = req.param('token');
     var password = req.param('password');
-    
-    if (!token) return res.status(400).json({error: 'missing token'});
-    
-    if (!password) return res.status(400).json({error: 'missing password'});
-    
+
+    if (!token) return res.status(400).json({ error: 'missing token' });
+
+    if (!password) return res.status(400).json({ error: 'missing password' });
+
     User.findOne({ uuid: uuid }).exec(function (err, user) {
       if (err) return res.negotiate(err);
-      if (!user) return res.status(404).json({error: 'user not found'});
+      if (!user) return res.status(404).json({ error: 'user not found' });
       if (!AuthService.compareResetToken(token, user)) {
-        return res.negotiate({error: 'mismatched tokens'});
+        return res.negotiate({ error: 'mismatched tokens' });
       }
       user.password = password;
       user.save(function (err) {
@@ -344,23 +383,23 @@ module.exports = {
 
   emailDoesExist: (req, res) => {
     var email = req.param('email') || "";
-    User.findOne({email: email}).exec((err, user) => {
+    User.findOne({ email: email }).exec((err, user) => {
       if (err) return res.negotiate(err);
       if (user) {
-        return res.json({doesExist: true});
+        return res.json({ doesExist: true });
       }
-      return res.json({doesExist: false});
+      return res.json({ doesExist: false });
     });
   },
 
   usernameDoesExist: (req, res) => {
     var username = req.param('username') || "";
-    User.findOne({username: username}).exec((err, user) => {
+    User.findOne({ username: username }).exec((err, user) => {
       if (err) return res.negotiate(err);
       if (user) {
-        return res.json({doesExist: true});
+        return res.json({ doesExist: true });
       }
-      return res.json({doesExist: false});
+      return res.json({ doesExist: false });
     });
   }
 
