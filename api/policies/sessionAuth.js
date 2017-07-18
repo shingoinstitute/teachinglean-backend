@@ -19,7 +19,6 @@ const options = {
 const jwtSecret = sails.config.passport.jwt.secret;
 
 module.exports = function(req, res, next) {
-
 	passport.authenticate('jwt', function(err, user, info) {
 		if (err) {
 			var errMsg = err.message ? err.message : err;

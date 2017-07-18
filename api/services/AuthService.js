@@ -59,7 +59,12 @@ module.exports = {
 	 */
 	createAndSetToken: function(res, user) {
 		var token = AuthService.createToken(user);
-		if (res && res.cookie) { res.cookie('XSRF-TOKEN', token); }
+		if (res && res.cookie) {
+			res.cookie('XSRF-TOKEN', token, {
+				secure: process.env.NODE_ENV === 'production',
+				domain: 'teachinglean.org'
+			});
+		}
 		return token;
 	},
 

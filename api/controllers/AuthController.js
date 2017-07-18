@@ -8,6 +8,11 @@ var passport = require('passport');
 var nodemailer = require('nodemailer');
 var bcrypt = require('bcrypt');
 
+const COOKIE_OPTIONS = {
+	domain: "teachinglean.org",
+	secure: true
+}
+
 module.exports = {
 
 	localAuth: function (req, res) {
@@ -33,10 +38,7 @@ module.exports = {
 				if (err) return res.negotiate(err);
 
 				var token = AuthService.createToken(user);
-				res.cookie('XSRF-TOKEN', token, {
-					secure: process.env.NODE_ENV === 'production',
-					domain: '.teachinglean.org'
-				});
+				res.cookie('XSRF-TOKEN', token, COOKIE_OPTIONS);
 
 				return res.json({
 					success: true,
@@ -62,10 +64,7 @@ module.exports = {
 			}
 
 			var token = AuthService.createToken(req.user);
-			res.cookie('XSRF-TOKEN', token, {
-				secure: process.env.NODE_ENV === 'production',
-				domain: '.teachinglean.org'
-			});
+			res.cookie('XSRF-TOKEN', token, COOKIE_OPTIONS);
 
 			var url = `${process.env.HOST_SERVER}`;
 			if (!url && process.env.NODE_ENV === 'development') {
@@ -80,7 +79,8 @@ module.exports = {
 	logout: function (req, res) {
 		req.logout();
 		delete res.cookie['XSRF-TOKEN'];
-		return res.json('loggout successful');
+		res.removeHeader('X-XSRF-TOKEN');
+		return res.json({info: 'loggout successful'});
 	},
 
   verifyEmail: function (req, res) {
