@@ -353,9 +353,9 @@ module.exports = {
   * identify the user, and a password parameter as the new password
   */
   updatePassword: function (req, res) {
-    var uuid = req.param('id');
-    var token = req.param('token');
-    var password = req.param('password');
+    var uuid = req.params.id;
+    var token = req.body.token;
+    var password = req.body.password;
 
     if (!token) return res.status(400).json({ error: 'missing token' });
 

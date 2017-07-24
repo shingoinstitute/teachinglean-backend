@@ -1,0 +1,28 @@
+<style>
+    .center {
+        text-align: center;
+    }
+    .container {
+        width: 100%;
+    }
+    .inner-container {
+        width: 480px;
+        margin: 0 auto;
+        word-break:break-all;
+    }
+</style>
+
+<div class="container">
+    <div class="inner-container">
+        <img src="https://teachinglean.org/images/logos/LEAN-logo-md.png">
+        <p> Dear ${user.firstname}</p>
+        <p>To reset your password, click on the following secure link.</p>
+        <!-- <p>${redirectUrl}</p> -->
+        <p><a href="${redirectUrl}">${redirectUrl}</a></p>
+        <p>This link will expire in 15 minutes.</p>
+        <p>Please note that if you did not initiate the password reset from our website you can disregard this message.</p>
+        <p>Thank you,</p>
+        <p>Lean Education Academic Network, <a href="https://teachinglean.org">teachinglean.org</a></p>
+        <p>This is an automated message, please do not reply.</p>
+    </div>
+</div>
