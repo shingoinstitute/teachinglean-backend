@@ -53,6 +53,7 @@ module.exports.policies = {
         find: true,
         findOne: true,
         topResults: true,
+        acceptAnswer: ['sessionAuth'],
         update: ['sessionAuth', 'isEntryOwner']
     },
 

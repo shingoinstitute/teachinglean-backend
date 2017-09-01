@@ -61,6 +61,35 @@ module.exports = {
 			if (entries.length > 10) entries = entries.slice(0, 10);
 			return res.json(entries);
 		});
+	},
+
+	/**
+	 * @description Handler for `put /entry/:id/accept`. 
+	 * This route is used to allow the owner of a "question entry" to update
+	 * the `markedCorrect` property on an "answer entry" that they do not own, but
+	 * is a child entry of the "question entry".
+	 * 
+	 * @param accepted {boolean} This handler expects a variable named `accepted` in the body of the request.
+	 */
+	acceptAnswer: function(req, res) {
+		const id = req.params.id;
+		const isAccepted = req.body.accepted;
+
+		Entry.findOne({ id: id })
+		.populate("parent")
+		.then(function(entry) {
+			if (entry.parent.owner === req.user.uuid)
+				return Entry.update({ id: id }, { markedCorrect: isAccepted });
+			return res.status(403).json({ error: "user not authorized." });
+		})
+		.then(function(entry) {
+			if (Array.isArray(entry))
+				entry = entry.pop();
+			return res.json(entry.toJSON());
+		})
+		.catch(function(err) {
+			res.status(500).json(err);
+		});
 	}
 
 };

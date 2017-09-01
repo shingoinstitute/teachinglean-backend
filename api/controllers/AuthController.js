@@ -59,8 +59,8 @@ module.exports = {
 		})(req, res, function (err) {
 
 			if (err) {
-				sails.log.error(err);
-				return res.negotiate(err);
+				sails.log.error(err.message ? err.message : err);
+				return res.redirect(`${url}/login`);
 			}
 
 			var token = AuthService.createToken(req.user);

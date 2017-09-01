@@ -44,6 +44,7 @@ module.exports.routes = {
 	'put /entry/upvote/:id': 'EntryController.upvote',
 	'put /entry/downvote/:id': 'EntryController.downvote',
 	'get /entry/topResults': 'EntryController.topResults',
+	'put /entry/:id/accept': 'EntryController.acceptAnswer',
 	
 	// +-------------+
 	// | user routes |
