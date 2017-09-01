@@ -67,23 +67,42 @@ module.exports = {
 						if (err) sails.log.error(err);
 					});
 
-					var redirectDomain = process.env.HOST_SERVER || `http://localhost:${process.env.PORT}`;
-					var redirectUrl = `${redirectDomain}/reset/${user.uuid}?token=${token}`;
+					var scheme = process.env.NODE_ENV === "development" ? "http" : "https";
+					var redirectUrl = `${scheme}://teachinglean.org/reset/${user.uuid}?token=${token}`;
 
 					transporter.sendMailAsync({
 						from: 'shingo.it@usu.edu',
 						to: user.email,
-						subject: 'teachinglean.org - password reset',
+						subject: 'Important: Password Reset for TeachingLEAN.org - NO REPLY',
 						html: `
-						<style>.center {text-align: center;}</style>
-						p>Click <a href="${redirectUrl}">here</a> to reset your password.</p>
-						<p class="center">Or</p>
-						<p>Copy and paste the following link into your browsers url bar.</p>
-						<br><br>
-						<p>${redirectUrl}</p>
-						<br><br>
-						<p>This link will expire in 12 hours.</p>
-						<p>If you did not request this password reset, please contact our support team at <a href="mailto:shingo.it@usu.edu">shingo.it@usu.edu</a></p>
+						<style>
+							.center {
+								text-align: center;
+							}
+							.container {
+								width: 100%;
+							}
+							.inner-container {
+								width: 480px;
+								margin: 0 auto;
+								word-break:break-all;
+							}
+						</style>
+
+						<div class="container">
+							<div class="inner-container">
+								<img src="https://teachinglean.org/images/logos/LEAN-logo-md.png">
+								<p> Dear ${user.firstname}</p>
+								<p>To reset your password, click on the following secure link.</p>
+								<!-- <p>${redirectUrl}</p> -->
+								<p><a href="${redirectUrl}">${redirectUrl}</a></p>
+								<p>This link will expire in 15 minutes.</p>
+								<p>Please note that if you did not initiate the password reset from our website you can disregard this message.</p>
+								<p>Thank you,</p>
+								<p>Lean Education Academic Network, <a href="https://teachinglean.org">teachinglean.org</a></p>
+								<p>This is an automated message, please do not reply.</p>
+							</div>
+						</div>
 						`
 					});
 
